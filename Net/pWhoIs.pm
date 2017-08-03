@@ -1,6 +1,7 @@
 #!/usr/bin/env perl
 
 use strict;
+use Socket;
 use IO::Socket::INET;
  
 $| = 1;
@@ -32,9 +33,29 @@ sub new {
     if (!$self->{req}) {
         die "Attribute 'req' is required for this module.\n";
     }
- 
+
 	bless $self, $class;
+
+    if ($self->{req} !~ /\\d+\\.\\d+\\.\\d+\\.\\d+/) {
+		$self->resolveReq();
+    }
+ 
     return $self;
+}
+
+######################################################
+sub resolveReq {
+######################################################
+    my $self = shift;
+
+	my $ipaddress;
+	my @host = gethostbyname($self->{req});
+	if (scalar(@host) == 0) {
+		die "Failed to resolve to IP\n";
+	} else {
+	    $ipaddress = Socket::inet_ntoa($host[4]);
+	}
+	$self->{req} = $ipaddress;
 }
 
 ######################################################
