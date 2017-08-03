@@ -1,6 +1,8 @@
 # Net-pWhoIs
 Perl library for pWhoIs
 
+TODO: Add support for bulk queries, reusing a single socket.
+
 The prefix whois service expects IP address queries.  This library makes an efforce to resolve hostnames if needed.
 
 Example of what this library returns.
