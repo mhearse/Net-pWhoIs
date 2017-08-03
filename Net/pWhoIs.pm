@@ -48,7 +48,6 @@ sub resolveReq {
 ######################################################
     my $self = shift;
 
-	my $ipaddress;
 	my @host = gethostbyname($self->{req});
 	if (scalar(@host) == 0) {
 		die "Failed to resolve to IP\n";
