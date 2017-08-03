@@ -4,6 +4,7 @@ Perl library for pWhoIs
 The prefix whois service expects IP address queries.  This library makes an efforce to resolve hostnames if needed.
 
 Example of what this library returns.
+<pre>
 $VAR1 = {
           'ip' => '193.62.192.4',
           'as-path' => '852 1299 786',
@@ -20,3 +21,4 @@ $VAR1 = {
           'origin-as' => '786',
           'country-code' => 'GB'
         };
+</pre>
