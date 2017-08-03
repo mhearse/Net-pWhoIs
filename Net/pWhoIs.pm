@@ -53,9 +53,8 @@ sub resolveReq {
 	if (scalar(@host) == 0) {
 		die "Failed to resolve to IP\n";
 	} else {
-	    $ipaddress = Socket::inet_ntoa($host[4]);
+	    $self->{req} = Socket::inet_ntoa($host[4]);
 	}
-	$self->{req} = $ipaddress;
 }
 
 ######################################################
