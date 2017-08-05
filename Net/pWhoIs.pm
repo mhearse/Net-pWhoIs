@@ -3,6 +3,7 @@
 use strict;
 use Socket;
 use IO::Socket::INET;
+use Scalar::Util 'reftype';
  
 $| = 1;
 
@@ -36,10 +37,6 @@ sub new {
 
 	bless $self, $class;
 
-    if ($self->{req} !~ /\\d+\\.\\d+\\.\\d+\\.\\d+/) {
-		$self->resolveReq();
-    }
- 
     return $self;
 }
 
@@ -47,17 +44,52 @@ sub new {
 sub resolveReq {
 ######################################################
     my $self = shift;
+    my $what = shift;
 
-	my @host = gethostbyname($self->{req});
-	if (scalar(@host) == 0) {
-		die "Failed to resolve to IP\n";
-	} else {
-	    $self->{req} = Socket::inet_ntoa($host[4]);
-	}
+    if ($what !~ /\\d+\\.\\d+\\.\\d+\\.\\d+/) {
+    	my @host = gethostbyname($what);
+    	if (scalar(@host) == 0) {
+    		die "Failed host to resolve to IP: $what\n";
+    	} else {
+    	    return Socket::inet_ntoa($host[4]);
+    	}
+    }
 }
 
 ######################################################
 sub pwhois {
+######################################################
+    my $self = shift;
+
+    if (Scalar::Util::reftype($self->{req}) eq 'ARRAY') {
+        return $self->pwhoisBulk();
+    }
+
+	my $socket = new IO::Socket::INET (
+	    PeerHost => $self->{hostname},
+	    PeerPort => $self->{port},
+	    Proto    => 'tcp',
+	);
+	die "Cannot connect to server $!\n" unless $socket;
+
+    my $resolved = $self->resolveReq($self->{req});
+    my $size = $socket->send($resolved);
+
+    shutdown($socket, 1);
+ 
+    my $response;
+    $socket->recv($response, 1024);
+    $socket->close();
+
+    my $formatted;
+    if ($response) {
+        $formatted = $self->formatResponse($response);
+    }
+    return $formatted;
+}
+
+######################################################
+sub pwhoisBulk {
 ######################################################
     my $self = shift;
 
@@ -67,30 +99,48 @@ sub pwhois {
 	    Proto    => 'tcp',
 	);
 	die "Cannot connect to server $!\n" unless $socket;
- 
-    my $size = $socket->send($self->{req});
- 
+
+    $socket->send("begin\n");
+
+    my %results;
+    for my $elmt (@{$self->{req}}) {
+        my $resolved = $self->resolveReq($elmt);
+
+        $socket->send("$resolved\n");
+
+        my $response;
+        $socket->recv($response, 1024);
+
+        if ($response) {
+            my $formatted = $self->formatResponse($response);
+            if ($formatted) {
+                $results{$elmt} = $formatted;
+            }
+        }
+    }
+
+    $socket->send("end\n");
+
     shutdown($socket, 1);
- 
-    $socket->recv($self->{response}, 1024);
     $socket->close();
 
-    if ($self->{response}) {
-        $self->formatResponse();
-    }
+    return \%results;
 }
 
 ######################################################
 sub formatResponse {
 ######################################################
     my $self = shift;
+    my $what = shift;
 
-    my @lines = split /\n/, $self->{response};
+    my @lines = split /\n/, $what;
 
     my %formatted;
     for my $line (@lines) {
         my ($name, $value) = split /:\s/, $line;
-        $formatted{lc($name)} = $value;
+        if ($name && $value) {
+            $formatted{lc($name)} = $value;
+        }
     }
 
     return \%formatted;
