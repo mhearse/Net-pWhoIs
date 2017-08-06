@@ -1,5 +1,5 @@
 # Net-pWhoIs
-Perl library for pWhoIs
+Perl library for the The Prefix WhoIs Project (pWhoIs)
 
 RECENT: Added bulk query suport, reusing a single socket.
 
@@ -7,6 +7,7 @@ The prefix whois service expects IP address queries.  This library makes an effo
 
 Example of what this library returns.
 <pre>
+SINGLE (returns Hash)
 $VAR1 = {
           'ip' => '193.62.192.4',
           'as-path' => '852 1299 786',
@@ -24,7 +25,7 @@ $VAR1 = {
           'country-code' => 'GB'
         };
 
-BULK
+BULK (returns Hash of Hashes)
 $VAR1 = {
           '166.70.12.30' => {
                               'cache-date' => '1501915575',
