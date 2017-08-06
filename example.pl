@@ -14,7 +14,7 @@ print Dumper($output);
 my $obj = Net::pWhoIs->new({ req => 'ebay.com' });
 my $output = $obj->pwhois();
 
-print Dumper($output);
+printf("%s:%s\n", $output->{latitude}, $output->{longitude});
 
 # Bulk query, combination of IPs and hostnames.
 my @list = ('166.70.12.30', '207.20.243.105', '67.225.131.208', 'perlmonks.org');
