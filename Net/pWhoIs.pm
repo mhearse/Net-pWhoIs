@@ -25,17 +25,17 @@ sub new {
         $self->{$key} = $defaults{$key};
     }
 
-	# Apply arguments passed by human.
-	# They will clobber our defaults.
+    # Apply arguments passed by human.
+    # They will clobber our defaults.
     for my $key (keys %{$args}) {
-		$self->{$key} = $args->{$key};
+        $self->{$key} = $args->{$key};
     }
 
     if (!$self->{req}) {
         die "Attribute 'req' is required for this module.\n";
     }
 
-	bless $self, $class;
+    bless $self, $class;
 
     return $self;
 }
@@ -47,12 +47,12 @@ sub resolveReq {
     my $what = shift;
 
     if ($what !~ /\\d+\\.\\d+\\.\\d+\\.\\d+/) {
-    	my @host = gethostbyname($what);
-    	if (scalar(@host) == 0) {
-    		die "Failed host to resolve to IP: $what\n";
-    	} else {
-    	    return Socket::inet_ntoa($host[4]);
-    	}
+        my @host = gethostbyname($what);
+        if (scalar(@host) == 0) {
+            die "Failed host to resolve to IP: $what\n";
+        } else {
+            return Socket::inet_ntoa($host[4]);
+        }
     }
 }
 
@@ -65,12 +65,12 @@ sub pwhois {
         return $self->pwhoisBulk();
     }
 
-	my $socket = new IO::Socket::INET (
-	    PeerHost => $self->{hostname},
-	    PeerPort => $self->{port},
-	    Proto    => 'tcp',
-	);
-	die "Cannot connect to server $!\n" unless $socket;
+    my $socket = new IO::Socket::INET (
+        PeerHost => $self->{hostname},
+        PeerPort => $self->{port},
+        Proto    => 'tcp',
+    );
+    die "Cannot connect to server $!\n" unless $socket;
 
     my $resolved = $self->resolveReq($self->{req});
     my $size = $socket->send($resolved);
@@ -93,12 +93,12 @@ sub pwhoisBulk {
 ######################################################
     my $self = shift;
 
-	my $socket = new IO::Socket::INET (
-	    PeerHost => $self->{hostname},
-	    PeerPort => $self->{port},
-	    Proto    => 'tcp',
-	);
-	die "Cannot connect to server $!\n" unless $socket;
+    my $socket = new IO::Socket::INET (
+        PeerHost => $self->{hostname},
+        PeerPort => $self->{port},
+        Proto    => 'tcp',
+    );
+    die "Cannot connect to server $!\n" unless $socket;
 
     $socket->send("begin\n");
 
