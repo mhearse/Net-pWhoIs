@@ -26,7 +26,7 @@ sub new {
     }
 
     # Apply arguments passed by human.
-    # They will clobber our defaults.
+    # They may clobber our defaults.
     for my $key (keys %{$args}) {
         $self->{$key} = $args->{$key};
     }
