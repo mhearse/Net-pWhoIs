@@ -1,5 +1,5 @@
 # Net-pWhoIs
-Perl library for the The Prefix WhoIs Project (pWhoIs)
+Perl library for the The Prefix WhoIs Project (pWhoIs).  [On CPAN](https://metacpan.org/pod/Net::pWhoIs)
 
 RECENT: Added bulk query suport, reusing a single socket.
 
